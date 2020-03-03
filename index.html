@@ -20,7 +20,6 @@ body {
   text-align: center;
 }
 .stock-canvas {
-  border-top: 1px solid #FCFCFC;
   border-bottom: 1px solid #FCFCFC;
   color: #FCFCFC;
 }
@@ -38,23 +37,45 @@ body {
 
 var stockCanvas = document.querySelector('#main-stock-canvas');
 var canvasContext = stockCanvas.getContext('2d');
-canvasContext.strokeStyle = "#FFFF8C";
-canvasContext.lineWidth = 2;
 canvasContext.imageSmoothingEnabled = true;
 
 var allStops = [15, 16, 19, 30, 38, 41, 31, 37, 56, 54, 66, 85, 110, 176];
 
 var canvasHeight = stockCanvas.offsetHeight;
 var canvasWidth = stockCanvas.offsetWidth;
-var stepLength = canvasWidth / (allStops.length -1);
 
-canvasContext.beginPath();
-canvasContext.moveTo(0, canvasHeight - allStops[0]);
-for (var i = 1; i < allStops.length; i++) {
-  canvasContext.lineTo(stepLength*i, canvasHeight - allStops[i]);
-  console.log(`${i}: ${stepLength*i}, ${canvasHeight - allStops[i]}`);
+function initCanvas (canvas) {
+  console.log('Initiating Canvas');
+  canvasContext.lineWidth = 1;
+  canvas.strokeStyle = "#FCFCFC22";
+
+  var stepVertical = canvasHeight / 8;
+
+  // Draw Guidelines
+  for (var i = 0; i < 8; i++) {
+    canvas.beginPath();
+    canvas.moveTo(0, i*stepVertical);
+    canvas.lineTo(canvasWidth, i*stepVertical);
+    canvas.stroke();
+  }
 }
-canvasContext.stroke();
+function drawCanvas (canvas) {
+  console.log('Drawing Canvas');
+  canvasContext.strokeStyle = "#FFFF8C";
+  canvasContext.lineWidth = 2;
+
+  var stepHorizontal = canvasWidth / (allStops.length -1);
+
+  canvas.beginPath();
+  canvas.moveTo(0, canvasHeight - allStops[0]);
+  for (var i = 1; i < allStops.length; i++) {
+    canvas.lineTo(stepHorizontal*i, canvasHeight - allStops[i]);
+    console.log(`${i}: ${stepHorizontal*i}, ${canvasHeight - allStops[i]}`);
+  }
+  canvas.stroke();
+}
+initCanvas(canvasContext);
+drawCanvas(canvasContext);
 
 </script>
 </body>
