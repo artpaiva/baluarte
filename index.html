@@ -2,6 +2,11 @@
 <head>
 
 <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 body {
   background: #272838;
 }
@@ -15,10 +20,9 @@ body {
   text-align: center;
 }
 .stock-canvas {
-  border: 2px solid #FCFCFC;
-  width: 100%;
-  max-width: 24rem;
-  height: 16rem;
+  border-top: 1px solid #FCFCFC;
+  border-bottom: 1px solid #FCFCFC;
+  color: #FCFCFC;
 }
 </style>
 </head>
@@ -27,11 +31,31 @@ body {
     <div>Baluarte</div>
   </div>
   <div class="canvas-wrapper">
-    <canvas class="stock-canvas" id="main-stock-canvas"></canvas>
+    <canvas class="stock-canvas" id="main-stock-canvas" width="360" height="240"></canvas>
   </div>
 
 <script type="text/javascript">
+
 var stockCanvas = document.querySelector('#main-stock-canvas');
+var canvasContext = stockCanvas.getContext('2d');
+canvasContext.strokeStyle = "#FFFF8C";
+canvasContext.lineWidth = 2;
+canvasContext.imageSmoothingEnabled = true;
+
+var allStops = [15, 16, 19, 30, 38, 41, 31, 37, 56, 54, 66, 85, 110, 176];
+
+var canvasHeight = stockCanvas.offsetHeight;
+var canvasWidth = stockCanvas.offsetWidth;
+var stepLength = canvasWidth / (allStops.length -1);
+
+canvasContext.beginPath();
+canvasContext.moveTo(0, canvasHeight - allStops[0]);
+for (var i = 1; i < allStops.length; i++) {
+  canvasContext.lineTo(stepLength*i, canvasHeight - allStops[i]);
+  console.log(`${i}: ${stepLength*i}, ${canvasHeight - allStops[i]}`);
+}
+canvasContext.stroke();
+
 </script>
 </body>
 
