@@ -151,7 +151,7 @@ function addRow (table, source, color) {
   var diff = source.history[source.history.length-1] - source.history[0];
   var rate = diff / source.history[0];
   var ratePercent = rate*100;
-  cellRate.innerHTML = `${ratePercent.toFixed(2)}% (${diff.toFixed(2)})`;
+  cellRate.innerHTML = `${ratePercent.toFixed(2)}% ( ${(rate > 0 ? '+': '') + diff.toFixed(2)})`;
   cellRate.style = `color: ${rate > 0 ? '#22FF99' : '#FF2222'}; `;
   row.appendChild(cellRate);
 
