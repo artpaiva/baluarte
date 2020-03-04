@@ -37,6 +37,21 @@ body {
   right: 0;
   white-space: nowrap;
 }
+
+.stock-table {
+  margin: auto;
+  /*border-collapse: collapse;*/
+  color: #FCFCFC;
+}
+.stock-row {
+  border-bottom: 2px solid 1FCFCFC;
+}
+.stock-table td{
+  padding: 6px 0.4rem;
+}
+td.stock-cell-color {
+  padding: 6px 2px;
+}
 </style>
 </head>
 <body>
@@ -47,9 +62,12 @@ body {
     <div class="canvas-wrapper">
       <canvas class="stock-canvas" id="main-stock-canvas" width="360" height="240"></canvas>
     </div>
+    <table class="stock-table" id="main-stock-table"></table>
   </div>
 
 <script type="text/javascript">
+
+var stockTable = document.querySelector('#main-stock-table');
 
 var stockCanvas = document.querySelector('#main-stock-canvas');
 var canvasContext = stockCanvas.getContext('2d');
@@ -57,15 +75,15 @@ canvasContext.imageSmoothingEnabled = true;
 
 var activeAAA = {
   name: 'American Airconditioner and Airbags',
-  history: [15, 16, 19, 30, 38, 41, 31, 37, 56, 54, 66, 85, 110, 176]
+  history: [15, 16, 19, 30, 38, 41, 31, 37, 56, 54, 66, 85, 110, 176.52]
 };
 var activeAAB = {
   name: 'Bristol Barbershop',
-  history: [35, 38, 48, 45, 42, 38, 51, 57, 78, 58, 61, 54, 48, 36]
+  history: [35, 38, 48, 45, 42, 38, 51, 57, 78, 58, 61, 54, 48, 36.55]
 };
 var activeAAC = {
-  name: 'Charles & Cody: Carpenters',
-  history: [76, 72, 78, 86, 82, 78, 71, 67, 68, 68, 51, 43, 28, 30]
+  name: 'Charles & Cody Carpentry',
+  history: [76, 72, 78, 86, 82, 78, 71, 67, 68, 68, 51, 43, 28, 30.43]
 };
 
 var canvasHeight = stockCanvas.offsetHeight;
@@ -110,6 +128,34 @@ function drawCanvas (canvas, source, color) {
     console.log(`${i}: ${stepHorizontal*i}, ${canvasHeight - source.history[i]}`);
   }
   canvas.stroke();
+
+  addRow(stockTable, source, color);
+}
+
+function addRow (table, source, color) {
+  var row = document.createElement('tr');
+  row.classList.add('stock-row');
+
+  var cellColor = document.createElement('td');
+  cellColor.classList.add('stock-cell-color');
+  cellColor.style = `background: ${color}; `;
+  row.appendChild(cellColor);
+
+  var cellName = document.createElement('td');
+  cellName.classList.add('stock-cell-name');
+  cellName.innerHTML = source.name;
+  row.appendChild(cellName);
+
+  var cellRate = document.createElement('td');
+  cellRate.classList.add('stock-cell-rate');
+  var diff = source.history[source.history.length-1] - source.history[0];
+  var rate = diff / source.history[0];
+  var ratePercent = rate*100;
+  cellRate.innerHTML = `${ratePercent.toFixed(2)}% (${diff.toFixed(2)})`;
+  cellRate.style = `color: ${rate > 0 ? '#22FF99' : '#FF2222'}; `;
+  row.appendChild(cellRate);
+
+  table.appendChild(row);
 }
 initCanvas(canvasContext);
 drawCanvas(canvasContext, activeAAA, '#FFFF8C');
