@@ -5,12 +5,17 @@
 }
 body {
   background: #272838;
+  font-family: 'Lora', serif;
 }
 .baldachin {
   padding: 1rem;
   color: #FCFCFC;
   text-align: center;
   font-size: 2rem;
+}
+.baldachin-title{
+  color: #FCFCFC55;
+  font-family: 'Crimson Text', serif;
 }
 .canvas-box {
   text-align: center;
@@ -35,19 +40,19 @@ body {
 }
 
 .stock-table {
-  max-width: 430px;
-  margin: auto;
+  max-width: 500px;
+  margin: 2rem auto;
   /*border-collapse: collapse;*/
   color: #FCFCFCCC;
 }
 .stock-row {
-  border-bottom: 2px solid 1FCFCFC;
+  border-bottom: 1px solid #FCFCFC;
 }
 .stock-table td{
   padding: 6px 0.4rem;
 }
 td.stock-cell-color {
-  padding: 6px 2px;
+  padding: 6px 1px;
 }
 td.stock-cell-rate{
   text-align: right;

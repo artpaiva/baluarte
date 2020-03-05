@@ -78,7 +78,7 @@ function addRow (table, source, color) {
 
   var cellName = document.createElement('td');
   cellName.classList.add('stock-cell-name');
-  cellName.innerHTML = `${source.ticker} - ${source.name}`;
+  cellName.innerHTML = `${source.ticker} - <i>${source.name}</i>`;
   row.appendChild(cellName);
 
   var cellRate = document.createElement('td');
