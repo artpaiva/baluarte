@@ -59,8 +59,17 @@ function drawCanvas (canvas, source, color) {
   stockCanvas.parentElement.insertBefore(active, stockCanvas)
 
   for (var i = 1; i < source.history.length; i++) {
-    canvas.lineTo(stepHorizontal*i, canvasHeight - source.history[i]);
-    console.log(`${i}: ${stepHorizontal*i}, ${canvasHeight - source.history[i]}`);
+    var xx = stepHorizontal*i;
+    var yy = canvasHeight - source.history[i];
+    canvas.lineTo(xx, yy);
+
+    var spot = document.createElement('div');
+    spot.classList.add('stock-slot');
+    spot.style = `top: ${yy}px; left: ${xx}px; color: ${color}`;
+    spot.setAttribute('value', `$${source.history[i].toFixed(2)}`);
+    stockCanvas.parentElement.insertBefore(spot, stockCanvas);
+
+    console.log(`${i}: ${xx}, ${yy}`);
   }
   canvas.stroke();
 
@@ -86,7 +95,7 @@ function addRow (table, source, color) {
   var diff = source.history[source.history.length-1] - source.history[0];
   var rate = diff / source.history[0];
   var ratePercent = rate*100;
-  cellRate.innerHTML = `${ratePercent.toFixed(2)}% (${(rate > 0 ? '+': '') + diff.toFixed(2)})`;
+  cellRate.innerHTML = `${ratePercent.toFixed(2)}% ($ ${(rate > 0 ? '+': '') + diff.toFixed(2)})`;
   cellRate.style = `color: ${rate > 0 ? '#22FF99' : '#FF6666'}; `;
   row.appendChild(cellRate);
 

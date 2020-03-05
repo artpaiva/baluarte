@@ -38,6 +38,36 @@ body {
   right: 0;
   white-space: nowrap;
 }
+.stock-slot {
+  position: absolute;
+  display: inline-block;
+  margin-top: -6px;
+  margin-left: -6px;
+  padding: 6px;
+  background: transparent;
+}
+.stock-slot:before {
+  content: attr(value);
+  opacity: 0;
+  position: absolute;
+  margin-top: -18px;
+  margin-left: -36px;
+  text-align: center;
+  transition: 0.2s;
+}
+.stock-slot:after {
+  content: '';
+  opacity: 0.2;
+  position: absolute;
+  margin-top: -2px;
+  margin-left: -2px;
+  padding: 2px;
+  border-radius: 4px;
+  background: #FCFCFC;
+}
+.stock-slot:hover:before, .stock-slot:hover:after{
+  opacity: 1;
+}
 
 .stock-table {
   max-width: 500px;
