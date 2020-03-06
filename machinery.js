@@ -5,21 +5,25 @@ var stockCanvas = document.querySelector('#main-stock-canvas');
 var canvasContext = stockCanvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = true;
 
-var activeAAA = {
-  ticker: 'AAA',
-  name: 'American Airconditioner and Airbags',
-  history: [15, 16, 19, 30, 38, 41, 31, 37, 56, 54, 66, 85, 110, 176.52]
-};
-var activeAAB = {
-  ticker: 'BBB',
-  name: 'Bobby\'s Bristol Barbershop',
-  history: [35, 38, 48, 45, 42, 38, 51, 57, 78, 58, 61, 54, 48, 36.55]
-};
-var activeAAC = {
-  ticker: 'CCC',
-  name: 'Charles & Cody Carpentry',
-  history: [76, 72, 78, 86, 82, 78, 71, 67, 68, 68, 51, 43, 28, 30.43]
-};
+var actives = [ {
+    ticker: 'AAA',
+    name: 'American Airconditioner and Airbags',
+    color: '#FFFF8C',
+    history: [15, 16, 19, 30, 38, 41, 31, 37, 56, 54, 66, 85, 110, 176.52]
+  },
+  {
+    ticker: 'BBB',
+    name: 'Bobby\'s Bristol Barbershop',
+    color: '#FF8FAC',
+    history: [35, 38, 48, 45, 42, 38, 51, 57, 78, 58, 61, 54, 48, 36.55]
+  },
+  {
+    ticker: 'CCC',
+    name: 'Charles & Cody Carpentry',
+    color: '#88FFFF',
+    history: [76, 72, 78, 86, 82, 78, 71, 67, 68, 68, 51, 43, 28, 30.43]
+  }
+];
 
 var canvasHeight = stockCanvas.offsetHeight;
 var canvasWidth = stockCanvas.offsetWidth;
@@ -39,7 +43,8 @@ function initCanvas (canvas) {
     canvas.stroke();
   }
 }
-function drawCanvas (canvas, source, color) {
+function drawCanvas (canvas, source) {
+  var color = source.color;
   console.log('Drawing Canvas');
   canvasContext.strokeStyle = `${color}77`;
   canvasContext.lineWidth = 2;
@@ -101,7 +106,12 @@ function addRow (table, source, color) {
 
   table.appendChild(row);
 }
+
+function calcScale (min, max) {
+  var scale = 1;
+}
+
 initCanvas(canvasContext);
-drawCanvas(canvasContext, activeAAA, '#FFFF8C');
-drawCanvas(canvasContext, activeAAB, '#FF8FAC');
-drawCanvas(canvasContext, activeAAC, '#88FFFF');
+for (var active in actives) {
+  drawCanvas(canvasContext, actives[active]);
+}
