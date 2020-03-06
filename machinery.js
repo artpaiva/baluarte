@@ -36,12 +36,14 @@ function initCanvas (canvas) {
   var figure = calcScale(240, extremities.min, extremities.max);
   var activeHeight = figure.ceiling - figure.stride;
 
-  var stepVertical = canvasHeight / 5;
-  var stepCanvas = activeHeight / 5;
+  var steps = idealStep(figure.floor, figure.ceiling);
+
+  var stepVertical = canvasHeight / steps;
+  var stepCanvas = activeHeight / steps;
   var stride = figure.stride * figure.scale;
 
   // Draw Guidelines
-  for (var i = 0; i <= 5; i++) {
+  for (var i = 0; i <= steps; i++) {
     var hy = i*stepVertical;
     var yy = i*stepCanvas;
     canvas.beginPath();
@@ -58,6 +60,19 @@ function initCanvas (canvas) {
     stockCanvas.parentElement.insertBefore(ruler, stockCanvas);
   }
 }
+function idealStep (floor, ceiling) {
+  var stridiff = ceiling - floor;
+  var step = 5;
+  for (var i = 8; i >= 3; i--) {
+    var calci = Math.floor(stridiff/i);
+    if (calci%5 === 0 || calci%5 === 5) {
+      step = i;
+      break;
+    }
+  }
+  return step;
+}
+
 function drawCanvas (canvas, source) {
   var color = source.color;
   console.log('Drawing Canvas');
