@@ -68,6 +68,15 @@ body {
 .stock-slot:hover:before, .stock-slot:hover:after{
   opacity: 1;
 }
+.guideline-label {
+  position: absolute;
+  margin-top: -0.6rem;
+  color: #FCFCFC55;
+  text-align: left;
+  margin-left: 364px;
+  white-space: nowrap;
+}
+
 
 .stock-table {
   max-width: 500px;

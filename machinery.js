@@ -33,14 +33,29 @@ function initCanvas (canvas) {
   canvasContext.lineWidth = 1;
   canvas.strokeStyle = "#FCFCFC22";
 
-  var stepVertical = canvasHeight / 8;
+  var figure = calcScale(240, extremities.min, extremities.max);
+  var activeHeight = figure.ceiling - figure.stride;
+
+  var stepVertical = canvasHeight / 5;
+  var stepCanvas = activeHeight / 5;
+  var stride = figure.stride * figure.scale;
 
   // Draw Guidelines
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i <= 5; i++) {
+    var hy = i*stepVertical;
+    var yy = i*stepCanvas;
     canvas.beginPath();
-    canvas.moveTo(0, i*stepVertical);
-    canvas.lineTo(canvasWidth, i*stepVertical);
+    canvas.moveTo(0, hy);
+    canvas.lineTo(canvasWidth, hy);
     canvas.stroke();
+
+    var top = figure.ceiling - yy;
+
+    var ruler = document.createElement('label');
+    ruler.classList.add('guideline-label');
+    ruler.innerHTML = Math.floor(top);
+    ruler.style = `top: ${hy}; `;
+    stockCanvas.parentElement.insertBefore(ruler, stockCanvas);
   }
 }
 function drawCanvas (canvas, source) {
@@ -131,6 +146,9 @@ function calcScale (height, min, max) {
   var diff = ceiling - floor;
 
   return {
+    diff: diff,
+    ceiling: ceiling,
+    floor: floor,
     scale: height / diff,
     stride: floor
   };
