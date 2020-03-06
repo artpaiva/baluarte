@@ -155,7 +155,12 @@ function extremities (source) {
 }
 
 function calcScale (height, min, max) {
-  var ratio = Math.pow(10, Math.floor(Math.log10(max - min)));
+  var sub = max - min;
+  var ratio = Math.pow(10, Math.floor(Math.log10(sub)));
+  var minratio = Math.pow(10, Math.floor(Math.log10(min)));
+  if (ratio > minratio*10) {
+    ratio /= 10;
+  }
 
   var ceiling = Math.ceil((max+1)/ratio)*ratio;
   var floor = Math.floor(min/ratio)*ratio;
