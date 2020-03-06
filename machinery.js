@@ -92,7 +92,6 @@ function drawCanvas (canvas, source) {
   active.classList.add('active-label');
   active.innerHTML = source.ticker;
   active.style = `color: ${color}AA; top: ${initialHeight}; `;
-  // stockCanvas.parentElement.appendChild(active);
   stockCanvas.parentElement.insertBefore(active, stockCanvas);
 
   for (var i = 1; i < source.history.length; i++) {
@@ -156,8 +155,10 @@ function extremities (source) {
 }
 
 function calcScale (height, min, max) {
-  var ceiling = Math.ceil((max+1)/10)*10;
-  var floor = Math.floor(min/10)*10;
+  var ratio = Math.pow(10, Math.floor(Math.log10(max - min)));
+
+  var ceiling = Math.ceil((max+1)/ratio)*ratio;
+  var floor = Math.floor(min/ratio)*ratio;
   var diff = ceiling - floor;
 
   return {
