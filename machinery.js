@@ -51,10 +51,11 @@ function drawCanvas (canvas, source) {
 
   var stepHorizontal = canvasWidth / (source.history.length -1);
   var figure = calcScale(240, extremities.min, extremities.max);
+  var stride = figure.stride * figure.scale;
 
   canvas.beginPath();
 
-  var initialHeight = canvasHeight - source.history[0] * figure.scale + figure.stride;
+  var initialHeight = canvasHeight - source.history[0] * figure.scale + stride;
   canvas.moveTo(0, initialHeight);
 
   var active = document.createElement('label');
@@ -66,7 +67,7 @@ function drawCanvas (canvas, source) {
 
   for (var i = 1; i < source.history.length; i++) {
     var xx = stepHorizontal*i;
-    var yy = canvasHeight - source.history[i] * figure.scale + figure.stride;
+    var yy = canvasHeight - source.history[i] * figure.scale + stride;
     canvas.lineTo(xx, yy);
 
     var spot = document.createElement('div');
