@@ -50,10 +50,11 @@ function drawCanvas (canvas, source) {
   canvasContext.lineWidth = 2;
 
   var stepHorizontal = canvasWidth / (source.history.length -1);
+  var figure = calcScale(240, extremities.min, extremities.max);
 
   canvas.beginPath();
 
-  var initialHeight = canvasHeight - source.history[0]
+  var initialHeight = canvasHeight - source.history[0] * figure.scale + figure.stride;
   canvas.moveTo(0, initialHeight);
 
   var active = document.createElement('label');
@@ -61,11 +62,11 @@ function drawCanvas (canvas, source) {
   active.innerHTML = source.ticker;
   active.style = `color: ${color}AA; top: ${initialHeight}; `;
   // stockCanvas.parentElement.appendChild(active);
-  stockCanvas.parentElement.insertBefore(active, stockCanvas)
+  stockCanvas.parentElement.insertBefore(active, stockCanvas);
 
   for (var i = 1; i < source.history.length; i++) {
     var xx = stepHorizontal*i;
-    var yy = canvasHeight - source.history[i];
+    var yy = canvasHeight - source.history[i] * figure.scale + figure.stride;
     canvas.lineTo(xx, yy);
 
     var spot = document.createElement('div');
@@ -107,9 +108,34 @@ function addRow (table, source, color) {
   table.appendChild(row);
 }
 
-function calcScale (min, max) {
-  var scale = 1;
+function extremities (source) {
+  var min = 100000000000;
+  var max = 0;
+  for (var i = 0; i < source.length; i++) {
+    var active = source[i].history;
+    for (var j = 0; j < active.length; j++) {
+      if (active[j] > max) max = active[j];
+      if (active[j] < min) min = active[j];
+    }
+  }
+  return {
+    min: min,
+    max: max
+  }
 }
+
+function calcScale (height, min, max) {
+  var ceiling = Math.ceil((max+1)/10)*10;
+  var floor = Math.floor(min/10)*10;
+  var diff = ceiling - floor;
+
+  return {
+    scale: height / diff,
+    stride: floor
+  };
+}
+
+var extremities = extremities(actives);
 
 initCanvas(canvasContext);
 for (var active in actives) {
