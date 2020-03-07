@@ -4,7 +4,7 @@
   padding: 0;
 }
 body {
-  background: #272838;
+  background: #17181B;
   font-family: 'Lora', serif;
 }
 .baldachin {
@@ -81,14 +81,19 @@ body {
 .stock-table {
   max-width: 500px;
   margin: 2rem auto;
-  /*border-collapse: collapse;*/
+  border-collapse: collapse;
   color: #FCFCFCCC;
 }
 .stock-row {
-  border-bottom: 1px solid #FCFCFC;
+  cursor: pointer;
+  border-bottom: 0px dashed #FCFCFC22;
+  transition: 0.2s;
+}
+.stock-row:hover {
+  background: #FCFCFC11;
 }
 .stock-table td{
-  padding: 6px 0.4rem;
+  padding: 10px 8px;
 }
 td.stock-cell-color {
   padding: 6px 1px;
