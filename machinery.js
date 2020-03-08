@@ -5,6 +5,7 @@ var stockCanvas = document.querySelector('#main-stock-canvas');
 var canvasContext = stockCanvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = true;
 
+/*
 var actives = [ {
     ticker: 'AAA',
     name: 'American Airconditioner and Airbags',
@@ -22,6 +23,15 @@ var actives = [ {
     name: 'Charles & Cody Carpentry',
     color: '#88FFFF',
     history: [76, 72, 78, 86, 82, 78, 71, 67, 68, 68, 51, 43, 28, 30.43]
+  }
+];
+*/
+var actives = [
+  {
+    ticker: 'AAA',
+    name: 'American Airconditioner and Airbags',
+    color: '#FFFF8C',
+    history: [0.005, 0.0037, 0.008, 0.007, 0.009, 0.012, 0.014, 0.0008, 0.002]
   }
 ];
 
@@ -55,7 +65,7 @@ function initCanvas (canvas) {
 
     var ruler = document.createElement('label');
     ruler.classList.add('guideline-label');
-    ruler.innerHTML = Math.floor(top);
+    ruler.innerHTML = top;
     ruler.style = `top: ${hy}; `;
     stockCanvas.parentElement.insertBefore(ruler, stockCanvas);
   }
@@ -156,14 +166,14 @@ function extremities (source) {
 
 function calcScale (height, min, max) {
   var sub = max - min;
-  var ratio = Math.pow(10, Math.floor(Math.log10(sub)));
-  var minratio = Math.pow(10, Math.floor(Math.log10(min)));
+  var subratio = ratio(sub);
+  var minratio = ratio(min);
   if (ratio > minratio*10) {
-    ratio /= 10;
+    subratio /= 10;
   }
 
-  var ceiling = Math.ceil((max+1)/ratio)*ratio;
-  var floor = Math.floor(min/ratio)*ratio;
+  var ceiling = Math.ceil((max+1)/subratio)*subratio;
+  var floor = Math.floor(min/subratio)*subratio;
   var diff = ceiling - floor;
 
   return {
@@ -173,6 +183,9 @@ function calcScale (height, min, max) {
     scale: height / diff,
     stride: floor
   };
+}
+function ratio (n) {
+  return Math.pow(10, Math.floor(Math.log10(n)));
 }
 
 var extremities = extremities(actives);
