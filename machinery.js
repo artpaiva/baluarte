@@ -31,7 +31,7 @@ var actives = [
     ticker: 'AAA',
     name: 'American Airconditioner and Airbags',
     color: '#FFFF8C',
-    history: [0.005, 0.0037, 0.008, 0.007, 0.009, 0.012, 0.014, 0.0008, 0.002]
+    history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.009]
   }
 ];
 
@@ -74,7 +74,7 @@ function idealStep (floor, ceiling) {
   var stridiff = ceiling - floor;
   var step = 5;
   for (var i = 8; i >= 3; i--) {
-    var calci = Math.floor(stridiff/i);
+    var calci = floorBy(stridiff/i);
     if (calci%5 === 0 || calci%5 === 5) {
       step = i;
       break;
@@ -168,12 +168,13 @@ function calcScale (height, min, max) {
   var sub = max - min;
   var subratio = ratio(sub);
   var minratio = ratio(min);
+  console.log(ceilBy(subratio));
   if (ratio > minratio*10) {
     subratio /= 10;
   }
 
-  var ceiling = Math.ceil((max+1)/subratio)*subratio;
-  var floor = Math.floor(min/subratio)*subratio;
+  var ceiling = ceilBy((max+1*minratio)/subratio)*subratio;
+  var floor = floorBy((min-1*minratio)/subratio)*subratio;
   var diff = ceiling - floor;
 
   return {
@@ -185,7 +186,35 @@ function calcScale (height, min, max) {
   };
 }
 function ratio (n) {
-  return Math.pow(10, Math.floor(Math.log10(n)));
+  return Math.pow(10, floorBy(Math.log10(n)));
+}
+function remain (n) {
+  return +(n.toString().slice(-1));
+}
+
+function house (n) {
+  if (n >= 1) {
+    return n.toString().length;
+  }
+  return -(n.toString().length-2);
+}
+
+function proportional (n, level) {
+  return Math.pow(10, house(level))*n;
+}
+
+
+function floorBy (n) {
+  if (n >= 1) {
+    return Math.floor(n);
+  }
+  return +(n - proportional(remain(n), n));
+}
+function ceilBy (n) {
+  if (n >= 1) {
+    return Math.ceil(n);
+  }
+  return +(n + proportional(10-remain(n), n));
 }
 
 var extremities = extremities(actives);
