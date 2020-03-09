@@ -5,6 +5,7 @@ var stockCanvas = document.querySelector('#main-stock-canvas');
 var canvasContext = stockCanvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = true;
 
+
 var actives = [ {
     ticker: 'AAA',
     name: 'American Airconditioner and Airbags',
@@ -24,6 +25,15 @@ var actives = [ {
     history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
   }
 ];
+
+// var actives = [
+//   {
+//     ticker: 'AAA',
+//     name: 'American Airconditioner and Airbags',
+//     color: '#FFFF8C',
+//     history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.009]
+//   }
+// ];
 
 var canvasHeight = stockCanvas.offsetHeight;
 var canvasWidth = stockCanvas.offsetWidth;
@@ -66,7 +76,7 @@ function idealStep (floor, ceiling) {
   var stridiff = ceiling - floor;
   var step = 5;
   for (var i = 8; i >= 3; i--) {
-    var calci = Math.floor(stridiff/i);
+    var calci = floorBy(stridiff/i);
     if (calci%5 === 0 || calci%5 === 5) {
       step = i;
       break;
@@ -104,7 +114,7 @@ function drawCanvas (canvas, source) {
     var spot = document.createElement('div');
     spot.classList.add('stock-slot');
     spot.style = `top: ${yy}px; left: ${xx}px; color: ${color}`;
-    spot.setAttribute('value', `$${source.history[i].toFixed(2)}`);
+    spot.setAttribute('value', `$${source.history[i].toRepresent()}`);
     stockCanvas.parentElement.insertBefore(spot, stockCanvas);
 
     console.log(`${i}: ${xx}, ${yy}`);
@@ -158,14 +168,15 @@ function extremities (source) {
 
 function calcScale (height, min, max) {
   var sub = max - min;
-  var ratio = Math.pow(10, Math.floor(Math.log10(sub)));
-  var minratio = Math.pow(10, Math.floor(Math.log10(min)));
-  if (ratio >= minratio*10) {
-    ratio /= 10;
+  var subratio = ratio(sub);
+  var minratio = ratio(min);
+  console.log(ceilBy(subratio));
+  if (ratio > minratio*10) {
+    subratio /= 10;
   }
 
-  var ceiling = Math.ceil((max+1)/ratio)*ratio;
-  var floor = Math.floor(min/ratio)*ratio;
+  var ceiling = ceilBy((max+1*minratio)/subratio)*subratio;
+  var floor = floorBy((min-1*minratio)/subratio)*subratio;
   var diff = ceiling - floor;
 
   return {
@@ -178,15 +189,55 @@ function calcScale (height, min, max) {
 }
 Number.prototype.toRepresent = function () {
   var value = this.valueOf();
-  if (value % 1 == 0.5 || value % 1 == 0.25) {
+
+  if (ratio(value) > 1) {
+    if (value % 1 == 0.5 || value % 1 == 0.25) {
+      return value;
+    }
+    if (value % 1 != 0) {
+      return Math.floor(value);
+    }
     return value;
   }
-  if (value % 1 != 0) {
-    return Math.floor(value);
+
+  switch (house(value)) {
+    case 1: case 2: case 5: case 4:
+      return floorBy(value);
   }
-  return value;
+  return value.toFixed(5);
 };
 
+function ratio (n) {
+  return Math.pow(10, floorBy(Math.log10(n)));
+}
+function remain (n) {
+  return +(n.toString().slice(-1));
+}
+
+function house (n) {
+  if (n >= 1) {
+    return n.toString().length;
+  }
+  return -(n.toString().length-2);
+}
+
+function proportional (n, level) {
+  return Math.pow(10, house(level))*n;
+}
+
+
+function floorBy (n) {
+  if (n >= 1) {
+    return Math.floor(n);
+  }
+  return +(n - proportional(remain(n), n));
+}
+function ceilBy (n) {
+  if (n >= 1) {
+    return Math.ceil(n);
+  }
+  return +(n + proportional(10-remain(n), n));
+}
 
 var extremities = extremities(actives);
 
