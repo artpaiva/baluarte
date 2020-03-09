@@ -67,7 +67,7 @@ function initCanvas (canvas) {
     var ruler = document.createElement('label');
     ruler.classList.add('guideline-label');
     // ruler.innerHTML = Math.floor(top);
-    ruler.innerHTML = top.toRepresent(2);
+    ruler.innerHTML = top.toRepresent();
     ruler.style = `top: ${vy}; `;
     stockCanvas.parentElement.insertBefore(ruler, stockCanvas);
   }
@@ -114,7 +114,7 @@ function drawCanvas (canvas, source) {
     var spot = document.createElement('div');
     spot.classList.add('stock-slot');
     spot.style = `top: ${yy}px; left: ${xx}px; color: ${color}`;
-    spot.setAttribute('value', `$${source.history[i].toRepresent()}`);
+    spot.setAttribute('value', `$${source.history[i].toRepresent(2)}`);
     stockCanvas.parentElement.insertBefore(spot, stockCanvas);
 
     console.log(`${i}: ${xx}, ${yy}`);
@@ -187,7 +187,7 @@ function calcScale (height, min, max) {
     stride: floor
   };
 }
-Number.prototype.toRepresent = function () {
+Number.prototype.toRepresent = function (force) {
   var value = this.valueOf();
 
   if (ratio(value) > 1) {
@@ -196,6 +196,9 @@ Number.prototype.toRepresent = function () {
     }
     if (value % 1 != 0) {
       return Math.floor(value);
+    }
+    if (force) {
+      return value.toFixed(force);
     }
     return value;
   }
