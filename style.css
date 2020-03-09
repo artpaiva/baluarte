@@ -41,9 +41,10 @@ body {
 .stock-slot {
   position: absolute;
   display: inline-block;
-  margin-top: -6px;
-  margin-left: -6px;
-  padding: 6px;
+  margin-top: -2px;
+  margin-left: -2px;
+  padding: 2px;
+  border-radius: 4px;
   background: transparent;
 }
 .stock-slot:before {
@@ -57,7 +58,7 @@ body {
 }
 .stock-slot:after {
   content: '';
-  opacity: 0.2;
+  opacity: 0.1;
   position: absolute;
   margin-top: -2px;
   margin-left: -2px;

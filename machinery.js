@@ -9,19 +9,19 @@ var actives = [ {
     ticker: 'AAA',
     name: 'American Airconditioner and Airbags',
     color: '#FFFF8C',
-    history: [15, 16, 19, 30, 38, 41, 31, 37, 56, 54, 66, 85, 110, 176.52]
+    history: [15, 16, 19, 24, 28, 30, 31, 37, 39, 34, 42, 45, 50, 56, 61, 59, 57, 58, 56, 54, 66, 85, 110, 176.52]
   },
   {
     ticker: 'BBB',
     name: 'Bobby\'s Bristol Barbershop',
     color: '#FF8FAC',
-    history: [35, 38, 48, 45, 42, 38, 51, 57, 78, 58, 61, 54, 48, 36.55]
+    history: [35, 38, 42, 45, 42, 46, 51, 57, 58, 54, 61, 54, 48, 45, 42, 48, 51, 57, 62, 58, 61, 54, 48, 36.55]
   },
   {
     ticker: 'CCC',
     name: 'Charles & Cody Carpentry',
     color: '#88FFFF',
-    history: [76, 72, 78, 86, 82, 78, 71, 67, 68, 68, 51, 43, 28, 30.43]
+    history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
   }
 ];
 
@@ -30,6 +30,7 @@ var canvasWidth = stockCanvas.offsetWidth;
 
 function initCanvas (canvas) {
   console.log('Initiating Canvas');
+  canvasContext.lineCap = 'round';
   canvasContext.lineWidth = 1;
   canvas.strokeStyle = "#FCFCFC22";
 
@@ -44,19 +45,20 @@ function initCanvas (canvas) {
 
   // Draw Guidelines
   for (var i = 0; i <= steps; i++) {
-    var hy = i*stepVertical;
+    var vy = i*stepVertical;
     var yy = i*stepCanvas;
     canvas.beginPath();
-    canvas.moveTo(0, hy);
-    canvas.lineTo(canvasWidth, hy);
+    canvas.moveTo(0, vy);
+    canvas.lineTo(canvasWidth, vy);
     canvas.stroke();
 
     var top = figure.ceiling - yy;
 
     var ruler = document.createElement('label');
     ruler.classList.add('guideline-label');
-    ruler.innerHTML = Math.floor(top);
-    ruler.style = `top: ${hy}; `;
+    // ruler.innerHTML = Math.floor(top);
+    ruler.innerHTML = top.toRepresent(2);
+    ruler.style = `top: ${vy}; `;
     stockCanvas.parentElement.insertBefore(ruler, stockCanvas);
   }
 }
@@ -158,7 +160,7 @@ function calcScale (height, min, max) {
   var sub = max - min;
   var ratio = Math.pow(10, Math.floor(Math.log10(sub)));
   var minratio = Math.pow(10, Math.floor(Math.log10(min)));
-  if (ratio > minratio*10) {
+  if (ratio >= minratio*10) {
     ratio /= 10;
   }
 
@@ -174,6 +176,17 @@ function calcScale (height, min, max) {
     stride: floor
   };
 }
+Number.prototype.toRepresent = function () {
+  var value = this.valueOf();
+  if (value % 1 == 0.5 || value % 1 == 0.25) {
+    return value;
+  }
+  if (value % 1 != 0) {
+    return Math.floor(value);
+  }
+  return value;
+};
+
 
 var extremities = extremities(actives);
 
