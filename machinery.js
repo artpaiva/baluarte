@@ -97,11 +97,14 @@ function idealStep (floor, ceiling) {
   return step;
 }
 
-function drawCanvas (canvas, source) {
+function drawCanvas (canvas, source, highlight) {
   var color = source.color;
   console.log('Drawing Canvas');
-  canvasContext.strokeStyle = `${color}77`;
-  canvasContext.lineWidth = 2;
+  canvas.strokeStyle = color + (highlight ? (highlight == source.ticker ? '': '55') : '99');
+  if (highlight) {
+    console.log(`${highlight} : ${source.ticker}`);
+  }
+  canvas.lineWidth = 2;
 
   var stepHorizontal = canvasWidth / (source.history.length -1);
   var figure = calcScale(240, extremities.min, extremities.max);
@@ -130,13 +133,16 @@ function drawCanvas (canvas, source) {
   }
   canvas.stroke();
 
-  renderRow(stockTable, source, color);
+  if (!highlight) {
+    renderRow(canvas, stockTable, source, color);
+  }
 }
 
-function renderRow (table, source, color) {
+function renderRow (canvas, table, source, color) {
 
   var rowFirst = document.createElement('tr');
   rowFirst.classList.add('stock-row');
+  rowFirst.onclick = () => { updateCanvas(canvas, source.ticker) };
 
   var cellColor = document.createElement('td');
   cellColor.classList.add('stock-cell-color');
@@ -158,6 +164,7 @@ function renderRow (table, source, color) {
   var rowSecond = document.createElement('tr');
   rowSecond.classList.add('stock-row');
   rowSecond.classList.add('sub');
+  rowSecond.onclick = () => { updateCanvas(canvas, source.ticker) };
 
   var cellInfo = document.createElement('td');
   cellInfo.classList.add('stock-cell-name');
@@ -204,7 +211,7 @@ function calcScale (height, min, max) {
   var sub = max - min;
   var subratio = ratio(sub);
   var minratio = ratio(min);
-  console.log(ceilBy(subratio));
+  // console.log(ceilBy(subratio));
   if (ratio > minratio*10) {
     subratio /= 10;
   }
@@ -274,6 +281,15 @@ function ceilBy (n) {
     return Math.ceil(n);
   }
   return +(n + proportional(10-remain(n), n));
+}
+
+function updateCanvas (canvas, highlight) {
+  canvas.clearRect(0, 0, stockCanvas.width, stockCanvas.height);
+  initCanvas(canvasContext);
+
+  for (var active in actives) {
+    drawCanvas(canvas, actives[active], highlight);
+  }
 }
 
 var extremities = extremities(actives);
