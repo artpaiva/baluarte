@@ -101,9 +101,6 @@ function drawCanvas (canvas, source, highlight) {
   var color = source.color;
   console.log('Drawing Canvas');
   canvas.strokeStyle = color + (highlight ? (highlight == source.ticker ? '': '55') : '99');
-  if (highlight) {
-    console.log(`${highlight} : ${source.ticker}`);
-  }
   canvas.lineWidth = 2;
 
   var stepHorizontal = canvasWidth / (source.history.length -1);
@@ -121,7 +118,9 @@ function drawCanvas (canvas, source, highlight) {
     var yy = canvasHeight - source.history[i] * figure.scale + stride;
     canvas.lineTo(xx, yy);
 
-    renderDot(stockCanvas, xx, yy, color, source.history[i]);
+    if (!highlight || highlight == source.ticker) {
+      renderDot(stockCanvas, xx, yy, color, source.history[i]);
+    }
 
     // console.log(`${i}: ${xx}, ${yy}`);
   }
@@ -136,6 +135,10 @@ function drawCanvas (canvas, source, highlight) {
     stockCanvas.parentElement.insertBefore(active, stockCanvas);
 
     renderRow(canvas, stockTable, source, color);
+  } else {
+    if (highlight == source.ticker) {
+      drawGradient(canvas, source, stepHorizontal, initialHeight, figure.scale, stride, color);
+    }
   }
 }
 
@@ -190,6 +193,26 @@ function renderDot (parent, xx, yy, color, value) {
     spot.style = `top: ${yy}px; left: ${xx}px; color: ${color}`;
     spot.setAttribute('value', `$${value.toRepresent(2)}`);
     parent.parentElement.insertBefore(spot, parent);
+}
+function drawGradient (canvas, source, steph, iy, scale, stride, color) {
+  var gradient = canvas.createLinearGradient(0, 0, 0, canvasHeight);
+  gradient.addColorStop(0, `${source.color}99`);
+  gradient.addColorStop(1, `${source.color}01`);
+  canvas.fillStyle = gradient;
+
+  canvas.beginPath();
+  canvas.moveTo(0, canvasHeight);
+  canvas.lineTo(0, iy);
+
+  for (var i = 1; i < source.history.length; i++) {
+    var xx = steph*i;
+    var yy = canvasHeight - source.history[i] * scale + stride;
+    canvas.lineTo(xx, yy);
+  }
+
+  canvas.lineTo(canvasWidth, canvasHeight);
+  canvas.closePath();
+  canvas.fill();
 }
 
 function extremities (source) {
