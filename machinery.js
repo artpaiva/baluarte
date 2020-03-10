@@ -31,21 +31,35 @@ var actives = [
     ticker: 'AAA',
     name: 'American Airconditioner and Airbags',
     color: '#FFFF8C',
-    history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.0091]
-  },
-  {
-    ticker: 'BBB',
-    name: 'Bobby\'s Bristol Barbershop',
-    color: '#FF8FAC',
-    history: [0.028, 0.030, 0.035, 0.037, 0.034, 0.032, 0.031, 0.026, 0.02437]
-  },
-  {
-    ticker: 'CCC',
-    name: 'Charles & Cody Carpentry',
-    color: '#88FFFF',
-    history: [0.02, 0.016, 0.015, 0.012, 0.016, 0.023, 0.0286, 0.0426, 0.04894]
+    history: [
+      {
+        time: + new Date(),
+        value: 0.005
+      },
+      {
+        time: + new Date(),
+        value: 0.003
+      },
+      {
+        time: + new Date(),
+        value: 0.008
+      },
+      {
+        time: + new Date(),
+        value: 0.007
+      },
+      {
+        time: + new Date(),
+        value: 0.009
+      },
+      {
+        time: + new Date(),
+        value: 0.012
+      }
+    ]
   }
 ];
+console.log(actives);
 
 var canvasHeight = stockCanvas.offsetHeight;
 var canvasWidth = stockCanvas.offsetWidth;
@@ -109,9 +123,10 @@ function drawCanvas (canvas, source) {
 
   canvas.beginPath();
 
-  var initialHeight = canvasHeight - source.history[0] * figure.scale + stride;
+  var initialHeight = canvasHeight - source.history[0].value * figure.scale + stride;
   canvas.moveTo(0, initialHeight);
-  addDot(stockCanvas, xx, yy, color, source.history[0]);
+  addDot(stockCanvas, xx, yy, color, source.history[0].value);
+  console.log(source.history[0].value);
 
   var active = document.createElement('label');
   active.classList.add('active-label');
@@ -121,10 +136,10 @@ function drawCanvas (canvas, source) {
 
   for (var i = 1; i < source.history.length; i++) {
     var xx = stepHorizontal*i;
-    var yy = canvasHeight - source.history[i] * figure.scale + stride;
+    var yy = canvasHeight - source.history[i].value * figure.scale + stride;
     canvas.lineTo(xx, yy);
 
-    addDot(stockCanvas, xx, yy, color, source.history[i]);
+    addDot(stockCanvas, xx, yy, color, source.history[i].value);
 
     // console.log(`${i}: ${xx}, ${yy}`);
   }
@@ -149,8 +164,8 @@ function addRow (table, source, color) {
 
   var cellRate = document.createElement('td');
   cellRate.classList.add('stock-cell-rate');
-  var diff = source.history[source.history.length-1] - source.history[0];
-  var rate = diff / source.history[0];
+  var diff = source.history[source.history.length-1].value - source.history[0].value;
+  var rate = diff / source.history[0].value;
   var ratePercent = rate*100;
   cellRate.innerHTML = `${ratePercent.toFixed(2)}% ($${(rate > 0 ? '+': '') + diff.toRepresent(2)})`;
   cellRate.style = `color: ${rate > 0 ? '#22FF99' : '#FF6666'}; `;
@@ -172,8 +187,8 @@ function extremities (source) {
   for (var i = 0; i < source.length; i++) {
     var active = source[i].history;
     for (var j = 0; j < active.length; j++) {
-      if (active[j] > max) max = active[j];
-      if (active[j] < min) min = active[j];
+      if (active[j].value > max) max = active[j].value;
+      if (active[j].value < min) min = active[j].value;
     }
   }
   return {
