@@ -6,60 +6,46 @@ var canvasContext = stockCanvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = true;
 
 
-// var actives = [ {
+var actives = [ {
+    ticker: 'AAA',
+    name: 'American Airconditioner and Airbags',
+    color: '#FFFF8C',
+    history: [15, 16, 19, 24, 28, 30, 31, 37, 39, 34, 42, 45, 50, 56, 61, 59, 57, 58, 56, 54, 66, 85, 110, 176.52]
+  },
+  {
+    ticker: 'BBB',
+    name: 'Bobby\'s Bristol Barbershop',
+    color: '#FF8FAC',
+    history: [35, 38, 42, 45, 42, 46, 51, 57, 58, 54, 61, 54, 48, 45, 42, 48, 51, 57, 62, 58, 61, 54, 48, 36.55]
+  },
+  {
+    ticker: 'CCC',
+    name: 'Charles & Cody Carpentry',
+    color: '#88FFFF',
+    history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
+  }
+];
+
+// var actives = [
+//   {
 //     ticker: 'AAA',
 //     name: 'American Airconditioner and Airbags',
 //     color: '#FFFF8C',
-//     history: [15, 16, 19, 24, 28, 30, 31, 37, 39, 34, 42, 45, 50, 56, 61, 59, 57, 58, 56, 54, 66, 85, 110, 176.52]
+//     history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.0091]
 //   },
 //   {
 //     ticker: 'BBB',
 //     name: 'Bobby\'s Bristol Barbershop',
 //     color: '#FF8FAC',
-//     history: [35, 38, 42, 45, 42, 46, 51, 57, 58, 54, 61, 54, 48, 45, 42, 48, 51, 57, 62, 58, 61, 54, 48, 36.55]
+//     history: [0.028, 0.030, 0.035, 0.037, 0.034, 0.032, 0.031, 0.026, 0.02437]
 //   },
 //   {
 //     ticker: 'CCC',
 //     name: 'Charles & Cody Carpentry',
 //     color: '#88FFFF',
-//     history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
+//     history: [0.02, 0.016, 0.015, 0.012, 0.016, 0.023, 0.0286, 0.0426, 0.04894]
 //   }
 // ];
-
-var actives = [
-  {
-    ticker: 'AAA',
-    name: 'American Airconditioner and Airbags',
-    color: '#FFFF8C',
-    history: [
-      {
-        time: + new Date(),
-        value: 0.005
-      },
-      {
-        time: + new Date(),
-        value: 0.003
-      },
-      {
-        time: + new Date(),
-        value: 0.008
-      },
-      {
-        time: + new Date(),
-        value: 0.007
-      },
-      {
-        time: + new Date(),
-        value: 0.009
-      },
-      {
-        time: + new Date(),
-        value: 0.012
-      }
-    ]
-  }
-];
-console.log(actives);
 
 var canvasHeight = stockCanvas.offsetHeight;
 var canvasWidth = stockCanvas.offsetWidth;
@@ -123,10 +109,9 @@ function drawCanvas (canvas, source) {
 
   canvas.beginPath();
 
-  var initialHeight = canvasHeight - source.history[0].value * figure.scale + stride;
+  var initialHeight = canvasHeight - source.history[0] * figure.scale + stride;
   canvas.moveTo(0, initialHeight);
-  addDot(stockCanvas, xx, yy, color, source.history[0].value);
-  console.log(source.history[0].value);
+  renderDot(stockCanvas, xx, yy, color, source.history[0]);
 
   var active = document.createElement('label');
   active.classList.add('active-label');
@@ -136,44 +121,62 @@ function drawCanvas (canvas, source) {
 
   for (var i = 1; i < source.history.length; i++) {
     var xx = stepHorizontal*i;
-    var yy = canvasHeight - source.history[i].value * figure.scale + stride;
+    var yy = canvasHeight - source.history[i] * figure.scale + stride;
     canvas.lineTo(xx, yy);
 
-    addDot(stockCanvas, xx, yy, color, source.history[i].value);
+    renderDot(stockCanvas, xx, yy, color, source.history[i]);
 
     // console.log(`${i}: ${xx}, ${yy}`);
   }
   canvas.stroke();
 
-  addRow(stockTable, source, color);
+  renderRow(stockTable, source, color);
 }
 
-function addRow (table, source, color) {
-  var row = document.createElement('tr');
-  row.classList.add('stock-row');
+function renderRow (table, source, color) {
+
+  var rowFirst = document.createElement('tr');
+  rowFirst.classList.add('stock-row');
 
   var cellColor = document.createElement('td');
   cellColor.classList.add('stock-cell-color');
   cellColor.style = `background: ${color}; `;
-  row.appendChild(cellColor);
+  cellColor.setAttribute('rowspan', 2);
+  rowFirst.appendChild(cellColor);
 
   var cellName = document.createElement('td');
   cellName.classList.add('stock-cell-name');
-  cellName.innerHTML = `${source.ticker} - <i>${source.name}</i>`;
-  row.appendChild(cellName);
+  cellName.innerHTML = `<i>${source.name}</i>`;
+  rowFirst.appendChild(cellName);
+
+  var cellValue = document.createElement('td');
+  cellValue.classList.add('stock-cell-rate');
+  cellValue.innerHTML = `$${source.history[source.history.length-1]}`;
+  rowFirst.appendChild(cellValue);
+
+  // Second Row
+  var rowSecond = document.createElement('tr');
+  rowSecond.classList.add('stock-row');
+  rowSecond.classList.add('sub');
+
+  var cellInfo = document.createElement('td');
+  cellInfo.classList.add('stock-cell-name');
+  cellInfo.innerHTML = `${source.ticker}`;
+  rowSecond.appendChild(cellInfo);
 
   var cellRate = document.createElement('td');
   cellRate.classList.add('stock-cell-rate');
-  var diff = source.history[source.history.length-1].value - source.history[0].value;
-  var rate = diff / source.history[0].value;
+  var diff = source.history[source.history.length-1] - source.history[0];
+  var rate = diff / source.history[0];
   var ratePercent = rate*100;
   cellRate.innerHTML = `${ratePercent.toFixed(2)}% ($${(rate > 0 ? '+': '') + diff.toRepresent(2)})`;
   cellRate.style = `color: ${rate > 0 ? '#22FF99' : '#FF6666'}; `;
-  row.appendChild(cellRate);
+  rowSecond.appendChild(cellRate);
 
-  table.appendChild(row);
+  table.appendChild(rowFirst);
+  table.appendChild(rowSecond);
 }
-function addDot (parent, xx, yy, color, value) {
+function renderDot (parent, xx, yy, color, value) {
     var spot = document.createElement('div');
     spot.classList.add('stock-slot');
     spot.style = `top: ${yy}px; left: ${xx}px; color: ${color}`;
@@ -187,8 +190,8 @@ function extremities (source) {
   for (var i = 0; i < source.length; i++) {
     var active = source[i].history;
     for (var j = 0; j < active.length; j++) {
-      if (active[j].value > max) max = active[j].value;
-      if (active[j].value < min) min = active[j].value;
+      if (active[j] > max) max = active[j];
+      if (active[j] < min) min = active[j];
     }
   }
   return {
