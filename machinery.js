@@ -116,12 +116,6 @@ function drawCanvas (canvas, source, highlight) {
   canvas.moveTo(0, initialHeight);
   renderDot(stockCanvas, xx, yy, color, source.history[0]);
 
-  var active = document.createElement('label');
-  active.classList.add('active-label');
-  active.innerHTML = source.ticker;
-  active.style = `color: ${color}AA; top: ${initialHeight}; `;
-  stockCanvas.parentElement.insertBefore(active, stockCanvas);
-
   for (var i = 1; i < source.history.length; i++) {
     var xx = stepHorizontal*i;
     var yy = canvasHeight - source.history[i] * figure.scale + stride;
@@ -134,6 +128,13 @@ function drawCanvas (canvas, source, highlight) {
   canvas.stroke();
 
   if (!highlight) {
+    var active = document.createElement('label');
+    active.classList.add('active-label');
+    active.innerHTML = source.ticker;
+    active.style = `color: ${color}AA; top: ${initialHeight}; `;
+    active.onclick = () => { updateCanvas(canvas, source.ticker) };
+    stockCanvas.parentElement.insertBefore(active, stockCanvas);
+
     renderRow(canvas, stockTable, source, color);
   }
 }
@@ -284,11 +285,20 @@ function ceilBy (n) {
 }
 
 function updateCanvas (canvas, highlight) {
+  removeClassElements('.guideline-label');
+  removeClassElements('.stock-slot');
+
   canvas.clearRect(0, 0, stockCanvas.width, stockCanvas.height);
   initCanvas(canvasContext);
 
   for (var active in actives) {
     drawCanvas(canvas, actives[active], highlight);
+  }
+}
+function removeClassElements (className) {
+  var elements = document.querySelectorAll(className);
+  for(var i = 0; i < elements.length; i++) {
+    elements[i].parentNode.removeChild(elements[i]);
   }
 }
 
