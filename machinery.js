@@ -126,20 +126,18 @@ function drawCanvas (canvas, source, highlight) {
   }
   canvas.stroke();
 
-  if (!highlight) {
-    var active = document.createElement('label');
-    active.classList.add('active-label');
-    active.innerHTML = source.ticker;
-    active.style = `color: ${color}AA; top: ${initialHeight}; `;
-    active.onclick = () => { updateCanvas(canvas, source.ticker) };
-    stockCanvas.parentElement.insertBefore(active, stockCanvas);
-
-    renderRow(canvas, stockTable, source, color);
-  } else {
-    if (highlight == source.ticker) {
-      drawGradient(canvas, source, stepHorizontal, initialHeight, figure.scale, stride, color);
-    }
+  if (highlight == source.ticker) {
+    drawGradient(canvas, source, stepHorizontal, initialHeight, figure.scale, stride, color);
   }
+
+  var active = document.createElement('label');
+  active.classList.add('active-label');
+  active.innerHTML = source.ticker;
+  active.style = `color: ${color}AA; top: ${initialHeight}; `;
+  active.onclick = () => { updateCanvas(canvas, source.ticker) };
+  stockCanvas.parentElement.insertBefore(active, stockCanvas);
+
+  renderRow(canvas, stockTable, source, color);
 }
 
 function renderRow (canvas, table, source, color) {
@@ -310,6 +308,8 @@ function ceilBy (n) {
 function updateCanvas (canvas, highlight) {
   removeClassElements('.guideline-label');
   removeClassElements('.stock-slot');
+  removeClassElements('.stock-row');
+  removeClassElements('.active-label');
 
   canvas.clearRect(0, 0, stockCanvas.width, stockCanvas.height);
   initCanvas(canvasContext);
@@ -318,6 +318,8 @@ function updateCanvas (canvas, highlight) {
     drawCanvas(canvas, actives[active], highlight);
   }
 }
+stockCanvas.onclick = () => { updateCanvas(canvasContext) };
+
 function removeClassElements (className) {
   var elements = document.querySelectorAll(className);
   for(var i = 0; i < elements.length; i++) {
