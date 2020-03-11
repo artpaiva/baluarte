@@ -101,7 +101,7 @@ function idealStep (floor, ceiling) {
 function drawCanvas (canvas, source, highlight) {
   var color = source.color;
   console.log(`Drawing '${source.ticker}' Canvas`);
-  canvas.strokeStyle = color + (highlight ? (highlight == source.ticker ? '': '55') : '99');
+  canvas.strokeStyle = color + (highlight ? (highlight == source.ticker ? '': '44') : '99');
   canvas.lineWidth = 2;
   canvas.setLineDash([]);
 
@@ -128,10 +128,9 @@ function drawCanvas (canvas, source, highlight) {
     drawGradient(canvas, source, stepHorizontal, initialHeight, figure.scale, stride, color);
 
     var trend = trendline(source.history, source.history.length);
-    // console.log(`${trend.y1}, ${trend.y2}`);
     trend.y1 = propVertical(canvasHeight, trend.y1, figure.scale, stride);
     trend.y2 = propVertical(canvasHeight, trend.y2, figure.scale, stride);
-    // console.log(`${trend.y1}, ${trend.y2}`);
+
     drawTrend(canvas, source, trend);
   }
 
@@ -213,7 +212,7 @@ function renderDot (canvas, source, parent, xx, yy, color, value) {
 
 function drawGradient (canvas, source, steph, iy, scale, stride, color) {
   var gradient = canvas.createLinearGradient(0, 0, 0, canvasHeight);
-  gradient.addColorStop(0, `${source.color}77`);
+  gradient.addColorStop(0, `${source.color}AA`);
   gradient.addColorStop(1, `${source.color}01`);
   canvas.fillStyle = gradient;
 

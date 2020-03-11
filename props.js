@@ -98,7 +98,7 @@ function ceilBy (n) {
 
 function trendline (ys, width) {
   // Set all x-coordinates and get their average, then fills the X-Row
-  var xs = Array.from(ys, (n, i) => i+1);
+  var xs = Array.from(ys, (n, i) => i);
   var xav = (total(xs) / xs.length) || 0;
   var xrow = Array.from(xs, n => n - xav);
 
@@ -113,16 +113,12 @@ function trendline (ys, width) {
   // Calculate the slope by diving the total for the Xy-Row by the total for the Xx-row
   var slope = total(xyrow) / total(xxrow);
   var intercept = yav - (slope * xav);
-  // console.log(`${slope}-${intercept} = ${slope - intercept}`);
 
   return {
-    y1: slope - intercept,
-    y2: slope*width - intercept
+    y1: ys[0]+slope,
+    y2: ys[0]+slope*width
   };
 }
-// Array.prototype.total = () => {
-//   return this.reduce((n, m) => n + m, 0);
-// };
 function total (list) {
   return list.reduce((n, m) => n + m, 0);
 }
