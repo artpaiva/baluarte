@@ -45,13 +45,14 @@ body {
 .stock-slot {
   position: absolute;
   display: inline-block;
-  margin-top: -2px;
-  margin-left: -2px;
-  padding: 2px;
+  margin-top: -4px;
+  margin-left: -4px;
+  padding: 4px;
   border-radius: 4px;
   background: transparent;
 }
 .stock-slot:before {
+  pointer-events: none;
   content: attr(value);
   opacity: 0;
   position: absolute;
@@ -63,6 +64,7 @@ body {
   transition: 0.2s;
 }
 .stock-slot:after {
+  pointer-events: none;
   content: '';
   opacity: 0.1;
   position: absolute;
