@@ -99,7 +99,7 @@ function idealStep (floor, ceiling) {
 
 function drawCanvas (canvas, source, highlight) {
   var color = source.color;
-  console.log('Drawing Canvas');
+  console.log(`Drawing '${source.ticker}' Canvas`);
   canvas.strokeStyle = color + (highlight ? (highlight == source.ticker ? '': '55') : '99');
   canvas.lineWidth = 2;
   canvas.setLineDash([]);
@@ -110,18 +110,18 @@ function drawCanvas (canvas, source, highlight) {
 
   canvas.beginPath();
 
-  var initialHeight = canvasHeight - source.history[0] * figure.scale + stride;
+  var initialHeight = propVertical(canvasHeight, source.history[0], figure.scale, stride);
   canvas.moveTo(0, initialHeight);
-  renderDot(stockCanvas, xx, yy, color, source.history[0]);
+  renderDot(canvas, source, stockCanvas, xx, yy, color, source.history[0]);
 
   for (var i = 1; i < source.history.length; i++) {
     var xx = stepHorizontal*i;
-    var yy = canvasHeight - source.history[i] * figure.scale + stride;
+    var yy = propVertical(canvasHeight, source.history[i], figure.scale, stride);
     canvas.lineTo(xx, yy);
 
-    if (!highlight || highlight == source.ticker) {
-      renderDot(stockCanvas, xx, yy, color, source.history[i]);
-    }
+    // if (!highlight || highlight == source.ticker) {
+      renderDot(canvas, source, stockCanvas, xx, yy, color, source.history[i]);
+    // }
 
     // console.log(`${i}: ${xx}, ${yy}`);
   }
@@ -186,13 +186,16 @@ function renderRow (canvas, table, source, color) {
   table.appendChild(rowFirst);
   table.appendChild(rowSecond);
 }
-function renderDot (parent, xx, yy, color, value) {
-    var spot = document.createElement('div');
-    spot.classList.add('stock-slot');
-    spot.style = `top: ${yy}px; left: ${xx}px; color: ${color}`;
-    spot.setAttribute('value', `$${value.toRepresent(2)}`);
-    parent.parentElement.insertBefore(spot, parent);
+function renderDot (canvas, source, parent, xx, yy, color, value) {
+  var spot = document.createElement('div');
+  spot.classList.add('stock-slot');
+  spot.style = `top: ${yy}px; left: ${xx}px; color: ${color}`;
+  spot.setAttribute('value', `$${value.toRepresent(2)}`);
+
+  spot.onclick = () => { updateCanvas(canvas, source.ticker) };
+  parent.parentElement.insertBefore(spot, parent);
 }
+
 function drawGradient (canvas, source, steph, iy, scale, stride, color) {
   var gradient = canvas.createLinearGradient(0, 0, 0, canvasHeight);
   gradient.addColorStop(0, `${source.color}77`);
@@ -205,7 +208,7 @@ function drawGradient (canvas, source, steph, iy, scale, stride, color) {
 
   for (var i = 1; i < source.history.length; i++) {
     var xx = steph*i;
-    var yy = canvasHeight - source.history[i] * scale + stride;
+    var yy = propVertical(canvasHeight, source.history[i], scale, stride);
     canvas.lineTo(xx, yy);
   }
 
@@ -228,6 +231,9 @@ function extremities (source) {
     min: min,
     max: max
   }
+}
+function propVertical (height, value, scale, stride) {
+  return height - value * scale + stride;
 }
 
 function calcScale (height, min, max) {
