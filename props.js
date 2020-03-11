@@ -37,7 +37,8 @@ function calcScale (height, min, max) {
     ceiling: ceiling,
     floor: floor,
     scale: height / diff,
-    stride: floor
+    stride: floor,
+    ratio: subratio
   };
 }
 Number.prototype.toRepresent = function (force) {
@@ -93,4 +94,35 @@ function ceilBy (n) {
     return Math.ceil(n);
   }
   return +(n + proportional(10-remain(n), n));
+}
+
+function trendline (ys, width) {
+  // Set all x-coordinates and get their average, then fills the X-Row
+  var xs = Array.from(ys, (n, i) => i+1);
+  var xav = (total(xs) / xs.length) || 0;
+  var xrow = Array.from(xs, n => n - xav);
+
+  // Get the y-coordinates' average, then fills the Y-Row
+  var yav = (total(ys) / ys.length) || 0;
+  var yrow = Array.from(ys, n => n - yav);
+
+  // Multiply the x and y rows
+  var xyrow = Array.from(yrow, (n, i) => yrow[i]*xrow[i]);
+  var xxrow = Array.from(xrow, n => n*n);
+
+  // Calculate the slope by diving the total for the Xy-Row by the total for the Xx-row
+  var slope = total(xyrow) / total(xxrow);
+  var intercept = yav - (slope * xav);
+  // console.log(`${slope}-${intercept} = ${slope - intercept}`);
+
+  return {
+    y1: slope - intercept,
+    y2: slope*width - intercept
+  };
+}
+// Array.prototype.total = () => {
+//   return this.reduce((n, m) => n + m, 0);
+// };
+function total (list) {
+  return list.reduce((n, m) => n + m, 0);
 }

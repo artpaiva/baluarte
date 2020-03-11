@@ -6,46 +6,46 @@ var canvasContext = stockCanvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = true;
 
 
-// var actives = [ {
-//     ticker: 'AAA',
-//     name: 'American Airconditioner and Airbags',
-//     color: '#FFFF8C',
-//     history: [15, 16, 19, 24, 28, 30, 31, 37, 39, 34, 42, 45, 50, 56, 61, 59, 57, 58, 56, 54, 66, 85, 110, 176.52]
-//   },
-//   {
-//     ticker: 'BBB',
-//     name: 'Bobby\'s Bristol Barbershop',
-//     color: '#FF8FAC',
-//     history: [35, 38, 42, 45, 42, 46, 51, 57, 58, 54, 61, 54, 48, 45, 42, 48, 51, 57, 62, 58, 61, 54, 48, 36.55]
-//   },
-//   {
-//     ticker: 'CCC',
-//     name: 'Charles & Cody Carpentry',
-//     color: '#88FFFF',
-//     history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
-//   }
-// ];
-
-var actives = [
-  {
+var shares = [ {
     ticker: 'AAA',
     name: 'American Airconditioner and Airbags',
     color: '#FFFF8C',
-    history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.0091]
+    history: [15, 16, 19, 24, 28, 30, 31, 37, 39, 34, 42, 45, 50, 56, 61, 59, 57, 58, 56, 54, 66, 85, 110, 176.52]
   },
   {
     ticker: 'BBB',
     name: 'Bobby\'s Bristol Barbershop',
     color: '#FF8FAC',
-    history: [0.028, 0.030, 0.035, 0.037, 0.034, 0.032, 0.031, 0.026, 0.02437]
+    history: [35, 38, 42, 45, 42, 46, 51, 57, 58, 54, 61, 54, 48, 45, 42, 48, 51, 57, 62, 58, 61, 54, 48, 36.55]
   },
   {
     ticker: 'CCC',
     name: 'Charles & Cody Carpentry',
     color: '#88FFFF',
-    history: [0.02, 0.016, 0.015, 0.012, 0.016, 0.023, 0.0286, 0.0426, 0.04894]
+    history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
   }
 ];
+
+// var shares = [
+//   {
+//     ticker: 'AAA',
+//     name: 'American Airconditioner and Airbags',
+//     color: '#FFFF8C',
+//     history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.0091]
+//   },
+//   {
+//     ticker: 'BBB',
+//     name: 'Bobby\'s Bristol Barbershop',
+//     color: '#FF8FAC',
+//     history: [0.028, 0.030, 0.035, 0.037, 0.034, 0.032, 0.031, 0.026, 0.02437]
+//   },
+//   {
+//     ticker: 'CCC',
+//     name: 'Charles & Cody Carpentry',
+//     color: '#88FFFF',
+//     history: [0.02, 0.016, 0.015, 0.012, 0.016, 0.023, 0.0286, 0.0426, 0.04894]
+//   }
+// ];
 
 var canvasHeight = stockCanvas.offsetHeight;
 var canvasWidth = stockCanvas.offsetWidth;
@@ -55,6 +55,7 @@ function initCanvas (canvas) {
   canvasContext.lineCap = 'round';
   canvasContext.lineWidth = 1;
   canvas.strokeStyle = "#FCFCFC22";
+  canvas.setLineDash([]);
 
   var figure = calcScale(240, extremities.min, extremities.max);
   var activeHeight = figure.ceiling - figure.stride;
@@ -119,16 +120,19 @@ function drawCanvas (canvas, source, highlight) {
     var yy = propVertical(canvasHeight, source.history[i], figure.scale, stride);
     canvas.lineTo(xx, yy);
 
-    // if (!highlight || highlight == source.ticker) {
-      renderDot(canvas, source, stockCanvas, xx, yy, color, source.history[i]);
-    // }
-
-    // console.log(`${i}: ${xx}, ${yy}`);
+    renderDot(canvas, source, stockCanvas, xx, yy, color, source.history[i]);
   }
   canvas.stroke();
 
   if (highlight == source.ticker) {
     drawGradient(canvas, source, stepHorizontal, initialHeight, figure.scale, stride, color);
+
+    var trend = trendline(source.history, source.history.length);
+    // console.log(`${trend.y1}, ${trend.y2}`);
+    trend.y1 = propVertical(canvasHeight, trend.y1, figure.scale, stride);
+    trend.y2 = propVertical(canvasHeight, trend.y2, figure.scale, stride);
+    // console.log(`${trend.y1}, ${trend.y2}`);
+    drawTrend(canvas, source, trend);
   }
 
   var active = document.createElement('label');
@@ -139,6 +143,17 @@ function drawCanvas (canvas, source, highlight) {
   stockCanvas.parentElement.insertBefore(active, stockCanvas);
 
   renderRow(canvas, stockTable, source, color);
+}
+function drawTrend (canvas, source, trend) {
+  console.log(trend);
+  canvas.strokeStyle = `${source.color}AA`;
+  canvas.lineWidth = 1;
+  canvas.setLineDash([5, 2]);
+
+  canvas.beginPath();
+  canvas.moveTo(0, trend.y1);
+  canvas.lineTo(canvasWidth, trend.y2);
+  canvas.stroke();
 }
 
 function renderRow (canvas, table, source, color) {
@@ -230,8 +245,8 @@ function updateCanvas (canvas, highlight) {
     canvas.clearRect(0, 0, stockCanvas.width, stockCanvas.height);
     initCanvas(canvasContext);
 
-    for (var active in actives) {
-      drawCanvas(canvas, actives[active], highlight);
+    for (var active in shares) {
+      drawCanvas(canvas, shares[active], highlight);
     }
   }
 }
@@ -244,9 +259,9 @@ function removeClassElements (className) {
   }
 }
 
-var extremities = extremities(actives);
+var extremities = extremities(shares);
 
 initCanvas(canvasContext);
-for (var active in actives) {
-  drawCanvas(canvasContext, actives[active]);
+for (var active in shares) {
+  drawCanvas(canvasContext, shares[active]);
 }
