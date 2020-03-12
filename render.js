@@ -5,6 +5,7 @@ var stockCanvas = document.querySelector('#main-stock-canvas');
 var canvasContext = stockCanvas.getContext('2d');
 canvasContext.imageSmoothingEnabled = true;
 
+var chart = 'candle';
 
 var shares = [ {
     ticker: 'AAA',
@@ -101,15 +102,12 @@ function idealStep (floor, ceiling) {
 function drawCanvas (canvas, source, chart, highlight) {
   var color = source.color;
   console.log(`Drawing '${source.ticker}' Canvas`);
-  canvas.strokeStyle = color + (highlight ? (highlight == source.ticker ? '': '33') : '99');
-  canvas.lineWidth = 2;
-  canvas.setLineDash([]);
 
   var stepHorizontal = canvasWidth / (source.history.length -1);
   var figure = calcScale(canvasHeight, extremities.min, extremities.max);
   var stride = figure.stride * figure.scale;
 
-  var initialHeight = propVertical(canvasHeight, source.history[0], figure.scale, stride);
+  var initialHeight = propVertical(canvasHeight, source.history[source.history.length -1], figure.scale, stride);
 
   switch (chart) {
     case 'candle':
@@ -130,14 +128,21 @@ function drawCanvas (canvas, source, chart, highlight) {
 
   renderRow(canvas, stockTable, source, color);
 }
-function graphLine (canvas, source, highlight, color, step, figure, stride, iy) {
-  canvas.beginPath();
-  canvas.moveTo(0, iy);
+function graphLine (canvas, source, highlight, color, step, figure, stride, iy, padding) {
+  canvas.strokeStyle = color + (highlight ? (highlight == source.ticker ? '': '33') : '99');
+  canvas.lineWidth = 2;
+  canvas.setLineDash([]);
 
+  canvas.beginPath();
+  canvas.moveTo(canvasWidth, iy);
+
+  padding = padding || 0;
   renderDot(canvas, source, stockCanvas, xx, yy, color, source.history[0]);
 
-  for (var i = 1; i < source.history.length; i++) {
-    var xx = step*i;
+  for (var i = source.history.length-1; i >= 0; i--) {
+    var index = source.history.length-1 - i;
+
+    var xx = canvasWidth - step*index - padding*index;
     var yy = propVertical(canvasHeight, source.history[i], figure.scale, stride);
     canvas.lineTo(xx, yy);
 
@@ -159,6 +164,7 @@ function graphLine (canvas, source, highlight, color, step, figure, stride, iy) 
 }
 function graphCandle (canvas, source, highlight, color, step, figure, stride, iy) {
   var step = 7;
+  var padding = 6;
   canvas.lineWidth = 1;
 
   for (var i = source.history.length-1; i > 0; i--) {
@@ -169,14 +175,14 @@ function graphCandle (canvas, source, highlight, color, step, figure, stride, iy
     var index = source.history.length-i;
 
     var pos = step * index;
-    var xx = canvasWidth - pos - 2*index;
+    var xx = canvasWidth - pos - padding*index;
     var yy = propVertical(canvasHeight, source.history[i], figure.scale, stride);
     var hh = diff * figure.scale;
 
     canvas.fillStyle = diff >= 0 ? '#22FF99' : '#FF6666';
     canvas.fillRect(xx, yy, step, hh );
 
-    canvas.strokeStyle = diff >= 0 ? '#22FF99' : '#FF6666';
+    canvas.strokeStyle = canvas.fillStyle;
     var yl = propVertical(canvasHeight, source.history[i]*0.9, figure.scale, stride);
     var yh = propVertical(canvasHeight, source.history[i]*1.1, figure.scale, stride);
 
@@ -187,6 +193,7 @@ function graphCandle (canvas, source, highlight, color, step, figure, stride, iy
 
     canvas.stroke();
   }
+  graphLine(canvas, source, highlight, color, step, figure, stride, iy, padding);
 }
 
 function drawTrend (canvas, source, trend) {
@@ -291,7 +298,7 @@ function updateCanvas (canvas, highlight) {
     initCanvas(canvasContext);
 
     for (var active in shares) {
-      drawCanvas(canvas, shares[active], 'candle', highlight);
+      drawCanvas(canvas, shares[active], chart, highlight);
     }
   }
 }
@@ -308,5 +315,5 @@ var extremities = extremities(shares);
 
 initCanvas(canvasContext);
 for (var active in shares) {
-  drawCanvas(canvasContext, shares[active], 'candle');
+  drawCanvas(canvasContext, shares[active], chart);
 }

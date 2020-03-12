@@ -114,3 +114,13 @@ td.stock-cell-color {
 td.stock-cell-rate{
   text-align: right;
 }
+
+.chart-button {
+  cursor: pointer;
+  padding: 0.6rem 1.6rem;
+  border: 2px solid #FCFCFCCC;
+  color: #FCFCFCCC;
+  background: none;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+}
