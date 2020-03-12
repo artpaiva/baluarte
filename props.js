@@ -112,7 +112,7 @@ function trendline (ys, width) {
 
   // Calculate the slope by diving the total for the Xy-Row by the total for the Xx-row
   var slope = total(xyrow) / total(xxrow);
-  var intercept = yav - (slope * xav);
+  // var intercept = yav - (slope * xav);
 
   return {
     y1: ys[0]+slope,
