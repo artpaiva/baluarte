@@ -3,14 +3,16 @@ function propVertical (height, value, scale, stride) {
   return height - value * scale + stride;
 }
 
-function extremities (source, limit) {
+function extremities (source, limit, highlight) {
   var min = 100000000000;
   var max = 0;
   for (var i = 0; i < source.length; i++) {
     var active = source[i].history;
-    for (var j = active.length-1; j >= propLimit(active.length, limit); j--) {
-      if (active[j] > max) max = active[j];
-      if (active[j] < min) min = active[j];
+    if (!highlight || highlight == source[i].ticker) {
+      for (var j = active.length-1; j >= propLimit(active.length, limit); j--) {
+        if (active[j] > max) max = active[j];
+        if (active[j] < min) min = active[j];
+      }
     }
   }
   return {

@@ -10,52 +10,52 @@ var lastChart = chart;
 
 var limit = 25;
 
-var shares = [ {
-    ticker: 'AAA',
-    name: 'American Airconditioner and Airbags',
-    color: '#FFFF8C',
-    history: [15, 16, 19, 24, 28, 30, 31, 37, 39, 34, 42, 45, 50, 56, 61, 59, 57, 58, 56, 54, 66, 85, 110, 176.52]
-  },
-  {
-    ticker: 'BBB',
-    name: 'Bobby\'s Bristol Barbershop',
-    color: '#FF8FAC',
-    history: [35, 38, 42, 45, 42, 46, 51, 57, 58, 54, 61, 54, 48, 45, 42, 48, 51, 57, 62, 58, 61, 54, 48, 36.55]
-  },
-  {
-    ticker: 'CCC',
-    name: 'Charles & Cody Carpentry',
-    color: '#88FFFF',
-    history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
-  }
-];
-
-// var shares = [
-//   {
+// var shares = [ {
 //     ticker: 'AAA',
 //     name: 'American Airconditioner and Airbags',
 //     color: '#FFFF8C',
-//     history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.0091]
+//     history: [15, 16, 19, 24, 28, 30, 31, 37, 39, 34, 42, 45, 50, 56, 61, 59, 57, 58, 56, 54, 66, 85, 110, 176.52]
 //   },
 //   {
 //     ticker: 'BBB',
 //     name: 'Bobby\'s Bristol Barbershop',
 //     color: '#FF8FAC',
-//     history: [0.028, 0.030, 0.035, 0.037, 0.034, 0.032, 0.031, 0.026, 0.02437]
+//     history: [35, 38, 42, 45, 42, 46, 51, 57, 58, 54, 61, 54, 48, 45, 42, 48, 51, 57, 62, 58, 61, 54, 48, 36.55]
 //   },
 //   {
 //     ticker: 'CCC',
 //     name: 'Charles & Cody Carpentry',
 //     color: '#88FFFF',
-//     history: [0.02, 0.016, 0.015, 0.012, 0.016, 0.023, 0.0286, 0.0426, 0.04894]
+//     history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
 //   }
 // ];
+
+var shares = [
+  {
+    ticker: 'AAA',
+    name: 'American Airconditioner and Airbags',
+    color: '#FFFF8C',
+    history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.0091]
+  },
+  {
+    ticker: 'BBB',
+    name: 'Bobby\'s Bristol Barbershop',
+    color: '#FF8FAC',
+    history: [0.028, 0.030, 0.035, 0.037, 0.034, 0.032, 0.031, 0.026, 0.02437]
+  },
+  {
+    ticker: 'CCC',
+    name: 'Charles & Cody Carpentry',
+    color: '#88FFFF',
+    history: [0.02, 0.016, 0.015, 0.012, 0.016, 0.023, 0.0286, 0.0426, 0.04894]
+  }
+];
 
 var canvasHeight = stockCanvas.offsetHeight;
 var canvasWidth = stockCanvas.offsetWidth;
 
 function initCanvas (canvas) {
-  console.log('Initiating Canvas');
+  // console.log('Initiating Canvas');
   canvasContext.lineCap = 'round';
   canvasContext.lineWidth = 1;
   canvas.strokeStyle = "#FCFCFC22";
@@ -104,7 +104,7 @@ function idealStep (floor, ceiling) {
 
 function drawCanvas (canvas, source, chart, highlight) {
   var color = source.color;
-  console.log(`Drawing '${source.ticker}' Canvas`);
+  // console.log(`Drawing '${source.ticker}' Canvas`);
 
   var stepHorizontal = canvasWidth / (Math.min(source.history.length -1, limit));
   var figure = calcScale(canvasHeight, extreme.min, extreme.max);
@@ -174,7 +174,7 @@ function graphLine (canvas, source, highlight, color, step, figure, stride, iy, 
 function graphCandle (canvas, source, highlight, color, step, figure, stride, iy, both) {
   // step = 7;
   var rear = step/2;
-  var padding = 6;
+  var padding = 2;
   canvas.lineWidth = 1;
 
   if (highlight == source.ticker) {
@@ -191,7 +191,7 @@ function graphCandle (canvas, source, highlight, color, step, figure, stride, iy
       var hh = diff * figure.scale;
 
       canvas.fillStyle = diff >= 0 ? '#22FF99' : '#FF6666';
-      canvas.fillRect(xx, yy, step, hh );
+      canvas.fillRect(xx+padding, yy, step, hh );
 
       canvas.strokeStyle = canvas.fillStyle;
       var yl = propVertical(canvasHeight, source.history[i]*0.9, figure.scale, stride);
@@ -205,7 +205,7 @@ function graphCandle (canvas, source, highlight, color, step, figure, stride, iy
       canvas.stroke();
     }
     if (both) {
-      graphLine(canvas, source, highlight, color, step, figure, stride, iy, padding, rear+padding);
+      graphLine(canvas, source, highlight, color, step, figure, stride, iy, padding, rear);
     } else {
       var trend = trendline(source.history, source.history.length, limit);
       trend.y1 = propVertical(canvasHeight, trend.y1, figure.scale, stride);
@@ -217,7 +217,7 @@ function graphCandle (canvas, source, highlight, color, step, figure, stride, iy
 }
 
 function drawTrend (canvas, source, trend, xx) {
-  console.log(trend);
+  // console.log(trend);
   canvas.strokeStyle = `${source.color}AA`;
   canvas.lineWidth = 1;
   canvas.setLineDash([5, 2]);
@@ -247,7 +247,7 @@ function renderRow (canvas, table, source, color) {
 
   var cellValue = document.createElement('td');
   cellValue.classList.add('stock-cell-rate');
-  cellValue.innerHTML = `$${source.history[source.history.length-1].toFixed(2)}`;
+  cellValue.innerHTML = `$${source.history[source.history.length-1].toRepresent()}`;
   rowFirst.appendChild(cellValue);
 
   // Second Row
@@ -320,7 +320,11 @@ function updateCanvas (canvas, highlight, force) {
     removeClassElements('.stock-row');
     removeClassElements('.active-label');
 
-    if (!highlight) {
+    if (highlight) {
+      extreme = extremities(shares, limit, highlight);
+    } else {
+      extreme = extremities(shares, limit);
+      lastChart = chart;
       chart = 'line';
     }
 
@@ -372,10 +376,10 @@ for (var active in shares) {
 
 function simulatePush () {
   for (var active in shares) {
-    var rate = randomRange(0.95, 1.05);
+    var rate = randomRange(0.9, 1.1);
     shares[active].history.push(shares[active].history[shares[active].history.length-1]*rate);
   }
-  console.log('Pushing');
+
   extreme = extremities(shares, limit);
   updateCanvas(canvasContext, currentHighlight, true);
   setTimeout(function(){simulatePush()}, 1000);
