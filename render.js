@@ -10,46 +10,46 @@ var lastChart = chart;
 
 var limit = 25;
 
-// var shares = [ {
-//     ticker: 'AAA',
-//     name: 'American Airconditioner and Airbags',
-//     color: '#FFFF8C',
-//     history: [15, 16, 19, 24, 28, 30, 31, 37, 39, 34, 42, 45, 50, 56, 61, 59, 57, 58, 56, 54, 66, 85, 110, 176.52]
-//   },
-//   {
-//     ticker: 'BBB',
-//     name: 'Bobby\'s Bristol Barbershop',
-//     color: '#FF8FAC',
-//     history: [35, 38, 42, 45, 42, 46, 51, 57, 58, 54, 61, 54, 48, 45, 42, 48, 51, 57, 62, 58, 61, 54, 48, 36.55]
-//   },
-//   {
-//     ticker: 'CCC',
-//     name: 'Charles & Cody Carpentry',
-//     color: '#88FFFF',
-//     history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
-//   }
-// ];
-
-var shares = [
-  {
+var shares = [ {
     ticker: 'AAA',
     name: 'American Airconditioner and Airbags',
     color: '#FFFF8C',
-    history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.0091]
+    history: [15, 16, 19, 24, 28, 30, 31, 37, 39, 34, 42, 45, 50, 56, 61, 59, 57, 58, 56, 54, 66, 85, 110, 176.52]
   },
   {
     ticker: 'BBB',
     name: 'Bobby\'s Bristol Barbershop',
     color: '#FF8FAC',
-    history: [0.028, 0.030, 0.035, 0.037, 0.034, 0.032, 0.031, 0.026, 0.02437]
+    history: [35, 38, 42, 45, 42, 46, 51, 57, 58, 54, 61, 54, 48, 45, 42, 48, 51, 57, 62, 58, 61, 54, 48, 36.55]
   },
   {
     ticker: 'CCC',
     name: 'Charles & Cody Carpentry',
     color: '#88FFFF',
-    history: [0.02, 0.016, 0.015, 0.012, 0.016, 0.023, 0.0286, 0.0426, 0.04894]
+    history: [76, 72, 78, 86, 82, 78, 71, 76, 68, 66, 68, 67, 70, 76, 82, 78, 71, 67, 68, 68, 51, 43, 39, 30.43]
   }
 ];
+
+// var shares = [
+//   {
+//     ticker: 'AAA',
+//     name: 'American Airconditioner and Airbags',
+//     color: '#FFFF8C',
+//     history: [0.005, 0.003, 0.008, 0.007, 0.009, 0.012, 0.014, 0.008, 0.0091]
+//   },
+//   {
+//     ticker: 'BBB',
+//     name: 'Bobby\'s Bristol Barbershop',
+//     color: '#FF8FAC',
+//     history: [0.028, 0.030, 0.035, 0.037, 0.034, 0.032, 0.031, 0.026, 0.02437]
+//   },
+//   {
+//     ticker: 'CCC',
+//     name: 'Charles & Cody Carpentry',
+//     color: '#88FFFF',
+//     history: [0.02, 0.016, 0.015, 0.012, 0.016, 0.023, 0.0286, 0.0426, 0.04894]
+//   }
+// ];
 
 var canvasHeight = stockCanvas.offsetHeight;
 var canvasWidth = stockCanvas.offsetWidth;
@@ -111,7 +111,7 @@ function drawCanvas (canvas, source, chart, highlight) {
   var stride = figure.stride * figure.scale;
 
   var initialHeight = propVertical(canvasHeight, source.history[source.history.length -1], figure.scale, stride);
-  var finalHeight = propVertical(canvasHeight, source.history[0], figure.scale, stride);
+  var finalHeight = propVertical(canvasHeight, source.history[propLimit(source.history.length, limit)], figure.scale, stride);
 
   switch (chart) {
     case 'candle':
@@ -126,12 +126,14 @@ function drawCanvas (canvas, source, chart, highlight) {
       break;
   }
 
-  var active = document.createElement('label');
-  active.classList.add('active-label');
-  active.innerHTML = source.ticker;
-  active.style = `color: ${color}AA; top: ${finalHeight}; `;
-  active.onclick = () => { updateCanvas(canvas, source.ticker) };
-  stockCanvas.parentElement.insertBefore(active, stockCanvas);
+  if (!highlight || highlight == source.ticker) {
+    var active = document.createElement('label');
+    active.classList.add('active-label');
+    active.innerHTML = source.ticker;
+    active.style = `color: ${color}AA; top: ${finalHeight}; `;
+    active.onclick = () => { updateCanvas(canvas, source.ticker) };
+    stockCanvas.parentElement.insertBefore(active, stockCanvas);
+  }
 
   renderRow(canvas, stockTable, source, color);
 }

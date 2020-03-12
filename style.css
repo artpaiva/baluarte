@@ -120,6 +120,7 @@ td.stock-cell-rate{
   cursor: pointer;
   padding: 0.6rem 1.6rem;
   border: 2px solid #FCFCFCCC;
+  outline: none;
   color: #FCFCFCCC;
   background: none;
   font-size: 1rem;
