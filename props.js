@@ -122,3 +122,7 @@ function trendline (ys, width) {
 function total (list) {
   return list.reduce((n, m) => n + m, 0);
 }
+
+function randomRange(min, max) { // min and max included 
+  return Math.random() * (max - min) + min;
+}

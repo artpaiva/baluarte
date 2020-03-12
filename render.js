@@ -59,7 +59,7 @@ function initCanvas (canvas) {
   canvas.strokeStyle = "#FCFCFC22";
   canvas.setLineDash([]);
 
-  var figure = calcScale(240, extremities.min, extremities.max);
+  var figure = calcScale(240, extreme.min, extreme.max);
   var activeHeight = figure.ceiling - figure.stride;
 
   var steps = idealStep(figure.floor, figure.ceiling);
@@ -105,7 +105,7 @@ function drawCanvas (canvas, source, chart, highlight) {
   console.log(`Drawing '${source.ticker}' Canvas`);
 
   var stepHorizontal = canvasWidth / (source.history.length -1);
-  var figure = calcScale(canvasHeight, extremities.min, extremities.max);
+  var figure = calcScale(canvasHeight, extreme.min, extreme.max);
   var stride = figure.stride * figure.scale;
 
   var initialHeight = propVertical(canvasHeight, source.history[source.history.length -1], figure.scale, stride);
@@ -245,7 +245,7 @@ function renderRow (canvas, table, source, color) {
 
   var cellValue = document.createElement('td');
   cellValue.classList.add('stock-cell-rate');
-  cellValue.innerHTML = `$${source.history[source.history.length-1]}`;
+  cellValue.innerHTML = `$${source.history[source.history.length-1].toFixed(2)}`;
   rowFirst.appendChild(cellValue);
 
   // Second Row
@@ -306,8 +306,8 @@ function drawGradient (canvas, source, step, fy, scale, stride, color, padding, 
 
 var lastHighlight;
 var currentHighlight;
-function updateCanvas (canvas, highlight) {
-  if (highlight !== currentHighlight || chart !== lastChart) {
+function updateCanvas (canvas, highlight, force) {
+  if (highlight !== currentHighlight || chart !== lastChart || force) {
     lastHighlight = currentHighlight;
     currentHighlight = highlight;
 
@@ -358,9 +358,23 @@ function removeClassElements (className) {
   }
 }
 
-var extremities = extremities(shares);
+var extreme = extremities(shares);
 
 initCanvas(canvasContext);
 for (var active in shares) {
   drawCanvas(canvasContext, shares[active], chart);
 }
+
+
+function simulatePush () {
+  for (var active in shares) {
+    var rate = randomRange(0.95, 1.05);
+    console.log(rate);
+    shares[active].history.push(shares[active].history[shares[active].history.length-1]*rate);
+  }
+  console.log('Pushing');
+  extreme = extremities(shares);
+  updateCanvas(canvasContext, currentHighlight, true);
+  setTimeout(function(){simulatePush()}, 5000);
+}
+setTimeout(function(){simulatePush()}, 1000);
