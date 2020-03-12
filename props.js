@@ -3,12 +3,12 @@ function propVertical (height, value, scale, stride) {
   return height - value * scale + stride;
 }
 
-function extremities (source) {
+function extremities (source, limit) {
   var min = 100000000000;
   var max = 0;
   for (var i = 0; i < source.length; i++) {
     var active = source[i].history;
-    for (var j = 0; j < active.length; j++) {
+    for (var j = active.length-1; j >= propLimit(active.length, limit); j--) {
       if (active[j] > max) max = active[j];
       if (active[j] < min) min = active[j];
     }
@@ -17,6 +17,9 @@ function extremities (source) {
     min: min,
     max: max
   }
+}
+function propLimit (length, limit) {
+  return length > limit ? length-limit-1 : 0;
 }
 
 function calcScale (height, min, max) {
@@ -96,7 +99,11 @@ function ceilBy (n) {
   return +(n + proportional(10-remain(n), n));
 }
 
-function trendline (ys, width) {
+function trendline (ys, width, limit) {
+  if (width > limit) {
+    ys = ys.slice( ys.length-limit, ys.length);
+    width = limit;
+  }
   // Set all x-coordinates and get their average, then fills the X-Row
   var xs = Array.from(ys, (n, i) => i);
   var xav = (total(xs) / xs.length) || 0;
