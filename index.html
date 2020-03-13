@@ -11,13 +11,20 @@
     <div class="baldachin-title">Baluarte</div>
   </div>
   <div class="canvas-box">
+    <div class="limit-list">
+      <button class="lmit-button" onclick="switchLimit(25)">1D</button>
+      <button class="lmit-button" onclick="switchLimit(125)">5D</button>
+      <button class="lmit-button" onclick="switchLimit(750)">1M</button>
+    </div>
     <div class="canvas-wrapper">
       <canvas class="stock-canvas" id="main-stock-canvas" width="360" height="240"></canvas>
     </div>
     <table class="stock-table" id="main-stock-table"></table>
-    <button class="chart-button" onclick="switchChart('candle')">Candlestick</button>
-    <button class="chart-button" onclick="switchChart('line')">Line Graph</button>
-    <button class="chart-button" onclick="switchChart('both')">Line & Candle</button>
+    <div class="chart-style">
+      <button class="chart-button" onclick="switchChart('candle')">Candlestick</button>
+      <button class="chart-button" onclick="switchChart('line')">Line Graph</button>
+      <button class="chart-button" onclick="switchChart('both')">Line & Candle</button>
+    </div>
   </div>
 </body>
 <script type="text/javascript" async src="props.js"></script>

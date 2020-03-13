@@ -360,6 +360,12 @@ function switchChart (value) {
       break;
   }
 }
+function switchLimit (value) {
+  if (limit != value) {
+    limit = value;
+    updateCanvas(canvasContext, currentHighlight, true);
+  }
+}
 
 function removeClassElements (className) {
   var elements = document.querySelectorAll(className);

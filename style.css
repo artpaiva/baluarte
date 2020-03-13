@@ -115,8 +115,7 @@ td.stock-cell-rate{
   text-align: right;
 }
 
-.chart-button {
-  display: inline-block;
+button {
   cursor: pointer;
   padding: 0.6rem 1.6rem;
   border: 2px solid #FCFCFCCC;
@@ -124,5 +123,12 @@ td.stock-cell-rate{
   color: #FCFCFCCC;
   background: none;
   font-size: 1rem;
+  text-transform: uppercase;
+}
+.chart-button {
+  display: inline-block;
+  text-transform: uppercase;
+}
+.limit-button {
   text-transform: uppercase;
 }
